@@ -13,15 +13,20 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Mo 1 chest/barrel/... tai vi tri cho truoc, quick-move (shift-click) nhung item dang can lay
- * vao tui do, roi dong lai. Chay theo tung buoc (tick) - moi lan clickSlot cach nhau it nhat
- * "delayTicks" (cfg.itemFetchSpeed) de khong lam nhanh bat thuong.
+ * vao tui do (UU TIEN item nao dang con thieu NHIEU NHAT truoc), roi dong lai. Chay theo tung buoc
+ * (tick) - moi lan clickSlot cach nhau it nhat "delayTicks" (cfg.itemFetchSpeed).
  *
- * Luu y: quick-move lay CA CHONG item trong 1 slot cung luc (khong lay le tung item mot), nen so
- * luong lay duoc co the nhieu hon can 1 chut - chap nhan du thua nho de don gian hoa logic.
+ * Ghi lai TOAN BO cac loai item thay duoc trong ruong (ke ca khong can lay) qua getAllItemsSeen(),
+ * de ItemFetchTask cap nhat vao ChestIndex cho lan sau.
+ *
+ * Luu y: quick-move lay CA CHONG item trong 1 slot cung luc, nen so luong lay duoc co the nhieu
+ * hon can 1 chut - chap nhan du thua nho de don gian hoa logic.
  */
 public class ContainerInteraction {
     private enum State { IDLE, WAITING_SCREEN, TRANSFERRING, CLOSING, DONE, FAILED }
@@ -30,6 +35,7 @@ public class ContainerInteraction {
     private int waitTicks;
     private int delayCounter;
     private final Map<Item, Integer> stillNeeded = new HashMap<>();
+    private final Set<Item> allItemsSeen = new HashSet<>();
     private boolean gotAnyItem = false;
 
     private static final int OPEN_TIMEOUT_TICKS = 30; // 1.5 giay cho GUI mo ra
@@ -42,10 +48,16 @@ public class ContainerInteraction {
         return gotAnyItem;
     }
 
+    /** Tat ca cac loai item da thay trong ruong nay (ke ca cai khong lay), dung de cap nhat ChestIndex. */
+    public Set<Item> getAllItemsSeen() {
+        return allItemsSeen;
+    }
+
     /** Bat dau mo container tai pos va lay cac item trong needed (giam dan so luong can khi lay duoc). */
     public void start(MinecraftClient client, BlockPos pos, Map<Item, Integer> needed) {
         stillNeeded.clear();
         stillNeeded.putAll(needed);
+        allItemsSeen.clear();
         gotAnyItem = false;
         waitTicks = 0;
         delayCounter = 0;
@@ -83,39 +95,43 @@ public class ContainerInteraction {
                 if (delayCounter < delayTicks) return false;
                 delayCounter = 0;
 
-                if (allSatisfied() || client.player.currentScreenHandler == client.player.playerScreenHandler) {
+                ScreenHandler handler = client.player.currentScreenHandler;
+                if (handler == client.player.playerScreenHandler) {
                     state = State.CLOSING;
                     return false;
                 }
 
-                ScreenHandler handler = client.player.currentScreenHandler;
                 int containerSlotCount = Math.max(0, handler.slots.size() - 36); // 36 = 27 inv + 9 hotbar
 
-                int slotToTake = -1;
+                // Ghi nhan toan bo item hien co trong ruong (de cap nhat index), va tim slot co item
+                // dang con thieu NHIEU NHAT de uu tien lay truoc.
+                int bestSlot = -1;
+                int bestNeed = 0;
                 for (int i = 0; i < containerSlotCount; i++) {
-                    Slot slot = handler.getSlot(i);
-                    ItemStack stack = slot.getStack();
+                    ItemStack stack = handler.getSlot(i).getStack();
                     if (stack.isEmpty()) continue;
 
                     Item item = stack.getItem();
+                    allItemsSeen.add(item);
+
                     Integer need = stillNeeded.get(item);
-                    if (need != null && need > 0) {
-                        slotToTake = i;
-                        break;
+                    if (need != null && need > bestNeed) {
+                        bestNeed = need;
+                        bestSlot = i;
                     }
                 }
 
-                if (slotToTake < 0) {
-                    // Ruong nay khong (con) co item can lay -> dong lai, chuyen sang ruong khac
+                if (bestSlot < 0 || allSatisfied()) {
+                    // Ruong nay khong (con) co item can lay, hoac da du roi -> dong lai
                     state = State.CLOSING;
                     return false;
                 }
 
-                Slot slot = handler.getSlot(slotToTake);
+                Slot slot = handler.getSlot(bestSlot);
                 Item item = slot.getStack().getItem();
                 int count = slot.getStack().getCount();
 
-                client.interactionManager.clickSlot(handler.syncId, slotToTake, 0, SlotActionType.QUICK_MOVE, client.player);
+                client.interactionManager.clickSlot(handler.syncId, bestSlot, 0, SlotActionType.QUICK_MOVE, client.player);
 
                 stillNeeded.merge(item, -count, Integer::sum);
                 gotAnyItem = true;

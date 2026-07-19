@@ -100,8 +100,12 @@ public final class SchematicScanner {
         }
 
         double px = playerPos.x, py = playerPos.y, pz = playerPos.z;
+        // Xay theo "hang" doc truc Z, tu Nam (+Z) sang Bac (-Z): moi hang xay het toan bo truc Y
+        // (tu duoi len, luon co diem tua) roi moi chuyen sang hang tiep theo, thay vi nhay lung tung.
         missing.sort((a, b) -> {
-            int cmpY = Integer.compare(a.getY(), b.getY());
+            int cmpRow = Integer.compare(b.getZ(), a.getZ()); // Z giam dan = Nam -> Bac
+            if (cmpRow != 0) return cmpRow;
+            int cmpY = Integer.compare(a.getY(), b.getY()); // trong 1 hang, xay het truc Y truoc
             if (cmpY != 0) return cmpY;
             double da = distSq(a, px, py, pz);
             double db = distSq(b, px, py, pz);

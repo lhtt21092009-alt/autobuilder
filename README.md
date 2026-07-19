@@ -5,9 +5,16 @@ Mod client hoan toan moi, tach rieng khoi Auto Flyer: tu dong **lay nguyen lieu 
 nang "Easy Place" cua Litematica de canh chinh huong block).
 
 ## Mo GUI
-Bam phim **NUM LOCK** (mac dinh) de mo/dong GUI. Doi phim trong **Options -> Controls -> muc "Auto Builder"**.
+Bam phim **NUM LOCK** (mac dinh) de mo/dong GUI cai dat day du (dung de chinh Vi tri 1/2, toc do,
+che do an toan...). Doi phim trong **Options -> Controls -> muc "Auto Builder"**.
 
-## GUI gom
+**Luu y quan trong:** giong nhu moi Screen khac trong Minecraft, khi GUI cai dat dang mo thi nhan
+vat KHONG the di chuyen (day la gioi han co san cua Minecraft, ap dung cho moi Screen, khong rieng
+gi mod nay). De khong bi khoa di chuyen trong luc bay/lam viec binh thuong, dung **thanh trang thai
+o goc tren TRAI man hinh** - luon hien san (khong phai Screen nen KHONG khoa di chuyen), bam vao do
+la Start/Stop ngay ma khong can mo GUI day du. Chi mo GUI day du khi can CHINH LAI cac gia tri.
+
+## GUI day du gom
 - **Vi tri 1 / Vi tri 2** (x,y,z + nut "Set here" + "Clear" o ca 2): 2 goc doi dien cua 1 khoi hop la
   **vung chua ruong/thung/barrel...** de mod tu bay toi lay nguyen lieu.
 - **Toc do bay**.
@@ -24,16 +31,33 @@ Bam phim **NUM LOCK** (mac dinh) de mo/dong GUI. Doi phim trong **Options -> Con
 ## Hoat dong khi bam Start
 1. **Tu quet** toan bo block con thieu trong lop (layer) Litematica dang hien - tu tinh so luong
    tung loai vat lieu can dung (khong dua vao Material List co san cua Litematica, tu quet truc tiep
-   nhu ban yeu cau).
-2. Neu trong tui do chua du, **tu bay den tung ruong/thung** trong vung Vi tri 1-2, mo ra va lay
-   (quick-move) nhung item can dung, cho toi khi du hoac het ruong trong vung.
-3. Sau do **tu bay den va dat tung block**, theo thu tu **Y tang dan (xay tu duoi len)** - dam bao
-   luon co it nhat 1 mat block dac ke ben de click vao dat, giong cach choi tay binh thuong. Mod tu
-   chon dung item trong hotbar/tui do, xoay mat nhin dung huong, roi "click chuot phai" mo phong -
-   neu ban da **bat tinh nang Easy Place trong Litematica**, no se tu dieu chinh dung huong/trang
-   thai cho block duoc dat.
+   nhu ban yeu cau). Vi mod luon so sanh THUC TE trong world voi ban ve, **neu ban da xay mot phan
+   tu truoc (vd choi tay hoac chay mod nay lan truoc bi dung giua chung), no se TU DONG biet cho nao
+   da xong va tiep tuc tu do, khong xay lai tu dau.**
+2. Neu trong tui do chua du, **tu bay den tung ruong/thung** trong vung Vi tri 1-2 de lay do:
+   - Uu tien den thang cac vi tri **DA BIET tu lan chay truoc** (luu trong `config/autobuilder_chestindex.json`)
+     co chua loai vat lieu **dang can NHIEU NHAT truoc**, thay vi di het tung ruong theo thu tu.
+   - Ruong nao chua tung mo se duoc mo de kham pha, va **ghi nho lai toan bo loai item thay duoc**
+     (ke ca cai khong can lay luc do) vao chi muc, de lan sau nhanh hon.
+   - Neu 1 ruong co nhieu loai item can, uu tien lay loai dang thieu nhieu nhat truoc.
+3. Sau do **tu bay den va dat tung block**, theo thu tu **tung HANG mot (doc truc Nam-Bac), moi
+   hang xay het toan bo truc Y (tu duoi len) roi moi chuyen sang hang tiep theo** - giong cach ban
+   mo ta (xay hang 1 xong het truc Y roi moi qua hang 2). Mod tu chon dung item trong hotbar/tui do,
+   xoay mat nhin dung huong, roi "click chuot phai" mo phong - neu ban da **bat tinh nang Easy Place
+   trong Litematica**, no se tu dieu chinh dung huong/trang thai cho block duoc dat.
 4. Neu giua chung het nguyen lieu, tu quay lai buoc 2 lay them roi tiep tuc xay.
 5. Xay xong het (khong con block nao thieu trong lop dang hien) -> phat am thanh bao hieu va dung lai.
+
+## Da sua trong ban nay
+- **Loi dung im o ruong khong lam gi**: nguyen nhan la diem dung cu tinh thang ngay tren nap ruong,
+  co the bi ket vao vat can (vd tran nha thap) khien khong bao gio "toi noi" du. Da doi sang tim 1
+  huong TRONG (khong bi chan) canh ben ruong de dung, giong cach mo o BuildTask.
+- **Thu tu xay** doi thanh tung hang (truc Z, Nam -> Bac), het truc Y roi moi qua hang ke.
+- **Uu tien lay vat lieu dang thieu nhieu nhat** truoc trong moi ruong, thay vi lay theo thu tu ngau
+  nhien trong o.
+- **Luu vi tri item da tung thay** vao `config/autobuilder_chestindex.json`, dung lai cho lan sau.
+- Them **thanh trang thai HUD o goc tren trai** (khong phai Screen) de Start/Stop ma khong bi khoa
+  di chuyen; GUI day du van con nhung chi can mo khi thuc su can chinh gia tri.
 
 ## Gioi han / dieu can luu y (quan trong, doc truoc khi dung)
 Day la tinh nang rat phuc tap, phien ban dau tien nay uu tien "chay duoc" hon la hoan hao tuyet doi;

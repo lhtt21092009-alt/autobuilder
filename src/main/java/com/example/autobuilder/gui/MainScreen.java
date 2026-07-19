@@ -211,6 +211,11 @@ public class MainScreen extends Screen {
     }
 
     @Override
+    public boolean shouldPause() {
+        return false;
+    }
+
+    @Override
     public void close() {
         saveFieldsToConfig();
         if (this.client != null) this.client.setScreen(parent);
