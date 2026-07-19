@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "autobuilder",
+  "version": "${version}",
+  "name": "Auto Builder",
+  "description": "Tu dong lay nguyen lieu tu rung va tu xay het ban ve Litematica dang tai (dung Easy Place).",
+  "authors": ["you"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.autobuilder.AutoBuilderMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "litematica": "*",
+    "malilib": "*"
+  }
+}
