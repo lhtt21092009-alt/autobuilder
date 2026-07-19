@@ -44,6 +44,8 @@ public class BuildTask {
     private int verifyTicks;
     private boolean finished = false;
     private boolean missingMaterial = false;
+    private int placedCount = 0;
+    private int noSupportCount = 0;
 
     private static final int VERIFY_TIMEOUT_TICKS = 10;
     private static final Direction[] FACE_PRIORITY = {
@@ -56,6 +58,15 @@ public class BuildTask {
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public int getPlacedCount() {
+        return placedCount;
+    }
+
+    /** True neu ket thuc ma khong dat duoc block nao ca - vd cong trinh dang lo lung khong co diem tua. */
+    public boolean madeNoProgress() {
+        return finished && !missingMaterial && placedCount == 0;
     }
 
     /** True neu dung lai giua chung vi thieu vat lieu (can quay lai fetch them). */
@@ -85,6 +96,11 @@ public class BuildTask {
                 // Khong co mat nao de click (chua co diem tua) -> tam bo qua, thu lai sau (khi cac
                 // block xung quanh da duoc dat)
                 failSkip.add(currentTarget);
+                noSupportCount++;
+                if (client.player != null && noSupportCount == 1) {
+                    client.player.sendMessage(net.minecraft.text.Text.literal(
+                            "Auto Builder: mot so vi tri chua co diem tua (block ke ben) de dat, se thu lai sau."), false);
+                }
                 currentTarget = null;
                 return false;
             }
@@ -154,10 +170,15 @@ public class BuildTask {
             case VERIFY -> {
                 verifyTicks++;
                 if (SchematicScanner.isPlacedCorrectly(world, currentTarget)) {
+                    placedCount++;
                     currentTarget = null; // xong, sang block tiep theo
                 } else if (verifyTicks > VERIFY_TIMEOUT_TICKS) {
                     // Khong dat duoc (sai huong, khong du reach, khong bat Easy Place...) -> bo qua
                     failSkip.add(currentTarget);
+                    if (placedCount == 0 && failSkip.size() == 1 && client.player != null) {
+                        client.player.sendMessage(net.minecraft.text.Text.literal(
+                                "Auto Builder: dat block khong thanh cong. Kiem tra da bat 'Easy Place' trong Litematica chua, va da co du item trong tui chua."), false);
+                    }
                     currentTarget = null;
                 }
             }

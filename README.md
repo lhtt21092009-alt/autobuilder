@@ -5,16 +5,13 @@ Mod client hoan toan moi, tach rieng khoi Auto Flyer: tu dong **lay nguyen lieu 
 nang "Easy Place" cua Litematica de canh chinh huong block).
 
 ## Mo GUI
-Bam phim **NUM LOCK** (mac dinh) de mo/dong GUI cai dat day du (dung de chinh Vi tri 1/2, toc do,
-che do an toan...). Doi phim trong **Options -> Controls -> muc "Auto Builder"**.
+Bam phim **NUM LOCK** (mac dinh) de mo/dong GUI. Doi phim trong **Options -> Controls -> muc "Auto Builder"**.
 
-**Luu y quan trong:** giong nhu moi Screen khac trong Minecraft, khi GUI cai dat dang mo thi nhan
-vat KHONG the di chuyen (day la gioi han co san cua Minecraft, ap dung cho moi Screen, khong rieng
-gi mod nay). De khong bi khoa di chuyen trong luc bay/lam viec binh thuong, dung **thanh trang thai
-o goc tren TRAI man hinh** - luon hien san (khong phai Screen nen KHONG khoa di chuyen), bam vao do
-la Start/Stop ngay ma khong can mo GUI day du. Chi mo GUI day du khi can CHINH LAI cac gia tri.
+Luu y: giong moi Screen khac trong Minecraft, khi GUI dang mo thi nhan vat khong the di chuyen -
+day la gioi han co san cua Minecraft (ap dung cho moi Screen), khong rieng gi mod nay. Dong GUI
+lai (bam Num Lock lan nua) truoc khi bay/lam viec.
 
-## GUI day du gom
+## GUI gom
 - **Vi tri 1 / Vi tri 2** (x,y,z + nut "Set here" + "Clear" o ca 2): 2 goc doi dien cua 1 khoi hop la
   **vung chua ruong/thung/barrel...** de mod tu bay toi lay nguyen lieu.
 - **Toc do bay**.
@@ -52,12 +49,16 @@ la Start/Stop ngay ma khong can mo GUI day du. Chi mo GUI day du khi can CHINH L
 - **Loi dung im o ruong khong lam gi**: nguyen nhan la diem dung cu tinh thang ngay tren nap ruong,
   co the bi ket vao vat can (vd tran nha thap) khien khong bao gio "toi noi" du. Da doi sang tim 1
   huong TRONG (khong bi chan) canh ben ruong de dung, giong cach mo o BuildTask.
+- **Loi bi ket ngay sau khi mo ruong roi thoat ra**: nhieu kha nang do server van tuong ruong dang
+  mo nen chan di chuyen ngay sau do. Da them buoc dong chac chan hon (goi `setScreen(null)` du
+  phong) + 1 khoang cho dem (~0.3 giay) sau khi dong truoc khi tinh la "xong", giam nguy co xung dot
+  goi tin dong/di chuyen.
 - **Thu tu xay** doi thanh tung hang (truc Z, Nam -> Bac), het truc Y roi moi qua hang ke.
 - **Uu tien lay vat lieu dang thieu nhieu nhat** truoc trong moi ruong, thay vi lay theo thu tu ngau
   nhien trong o.
 - **Luu vi tri item da tung thay** vao `config/autobuilder_chestindex.json`, dung lai cho lan sau.
-- Them **thanh trang thai HUD o goc tren trai** (khong phai Screen) de Start/Stop ma khong bi khoa
-  di chuyen; GUI day du van con nhung chi can mo khi thuc su can chinh gia tri.
+- **Da bo nut/thanh trang thai o goc man hinh** theo yeu cau - Start/Stop gio chi thao tac qua GUI
+  (Num Lock).
 
 ## Gioi han / dieu can luu y (quan trong, doc truoc khi dung)
 Day la tinh nang rat phuc tap, phien ban dau tien nay uu tien "chay duoc" hon la hoan hao tuyet doi;

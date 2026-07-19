@@ -114,6 +114,11 @@ public class AutoBuilderController {
                 if (buildTask.tick(client, cfg, buildFailSkip)) {
                     if (buildTask.isMissingMaterial()) {
                         beginFetchPhase(client, world, player);
+                    } else if (buildTask.madeNoProgress()) {
+                        player.sendMessage(Text.literal(
+                                "Auto Builder: KHONG dat duoc block nao (co the cong trinh dang lo lung, chua cham dat that, "
+                                        + "hoac chua bat Easy Place trong Litematica) - da dung lai."), false);
+                        stop();
                     } else {
                         // Xong 1 vong build -> quet lai xem con block nao khac (vd truoc chua co diem tua)
                         var rescan = SchematicScanner.scan(world, player.getPos(), buildFailSkip, 400_000);
@@ -145,10 +150,15 @@ public class AutoBuilderController {
 
         if (needed.isEmpty() || allZero(needed)) {
             // Da du do trong tui roi, khong can di lay - vao xay luon
+            player.sendMessage(Text.literal("Auto Builder: da du do trong tui - bat dau xay " + scan.missingPositionsBottomUp().size() + " block."), false);
             buildTask = new BuildTask(scan.missingPositionsBottomUp());
             phase = Phase.BUILDING;
             return;
         }
+
+        int totalNeeded = 0;
+        for (int v : needed.values()) totalNeeded += Math.max(0, v);
+        player.sendMessage(Text.literal("Auto Builder: dang di lay nguyen lieu (" + totalNeeded + " item con thieu)..."), false);
 
         fetchTask = new ItemFetchTask(world, AutoBuilderConfig.INSTANCE, needed);
         phase = Phase.FETCHING;
@@ -162,6 +172,7 @@ public class AutoBuilderController {
             stop();
             return;
         }
+        player.sendMessage(Text.literal("Auto Builder: bat dau xay " + scan.missingPositionsBottomUp().size() + " block con thieu..."), false);
         buildTask = new BuildTask(scan.missingPositionsBottomUp());
         phase = Phase.BUILDING;
     }

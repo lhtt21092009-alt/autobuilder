@@ -29,16 +29,18 @@ import java.util.Set;
  * hon can 1 chut - chap nhan du thua nho de don gian hoa logic.
  */
 public class ContainerInteraction {
-    private enum State { IDLE, WAITING_SCREEN, TRANSFERRING, CLOSING, DONE, FAILED }
+    private enum State { IDLE, WAITING_SCREEN, TRANSFERRING, CLOSING, CLOSE_WAIT, DONE, FAILED }
 
     private State state = State.IDLE;
     private int waitTicks;
     private int delayCounter;
+    private int closeWaitTicks;
     private final Map<Item, Integer> stillNeeded = new HashMap<>();
     private final Set<Item> allItemsSeen = new HashSet<>();
     private boolean gotAnyItem = false;
 
     private static final int OPEN_TIMEOUT_TICKS = 30; // 1.5 giay cho GUI mo ra
+    private static final int CLOSE_WAIT_TICKS = 6;    // ~0.3 giay dem sau khi dong, tranh server con tuong dang mo
 
     public boolean isIdle() {
         return state == State.IDLE || state == State.DONE || state == State.FAILED;
@@ -88,6 +90,8 @@ public class ContainerInteraction {
                     state = State.TRANSFERRING;
                 } else if (waitTicks > OPEN_TIMEOUT_TICKS) {
                     state = State.FAILED; // khong mo duoc (qua xa, bi chan, khong phai container...)
+                    client.player.sendMessage(net.minecraft.text.Text.literal(
+                            "Auto Builder: khong mo duoc 1 container (qua xa hoac bi chan) - bo qua, sang cai khac."), false);
                 }
             }
             case TRANSFERRING -> {
@@ -138,7 +142,19 @@ public class ContainerInteraction {
             }
             case CLOSING -> {
                 client.player.closeHandledScreen();
-                state = State.DONE;
+                if (client.currentScreen != null) {
+                    client.setScreen(null); // dam bao chac chan dong ca man hinh GUI (phong khi khong tu dong dong)
+                }
+                closeWaitTicks = 0;
+                state = State.CLOSE_WAIT;
+            }
+            case CLOSE_WAIT -> {
+                // Cho vai tick de goi dong duoc gui/xu ly xong, tranh truong hop server con tuong
+                // ruong dang mo va chan khong cho di chuyen ngay sau do.
+                closeWaitTicks++;
+                if (closeWaitTicks >= CLOSE_WAIT_TICKS) {
+                    state = State.DONE;
+                }
             }
             default -> {
                 return true;

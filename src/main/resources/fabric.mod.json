@@ -13,9 +13,6 @@
       "com.example.autobuilder.AutoBuilderMod"
     ]
   },
-  "mixins": [
-    "autobuilder.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.16.9",
     "minecraft": "~1.21.4",
