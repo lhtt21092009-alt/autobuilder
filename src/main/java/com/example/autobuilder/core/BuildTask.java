@@ -211,7 +211,7 @@ public class BuildTask {
             }
         }
 
-        int hotbarSlot = inv.getSelectedSlot();
+        int hotbarSlot = inv.selectedSlot;
         for (int i = 9; i < 36; i++) {
             if (inv.getStack(i).getItem() == neededItem) {
                 client.interactionManager.clickSlot(
