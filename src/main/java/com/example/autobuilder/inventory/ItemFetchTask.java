@@ -158,24 +158,42 @@ public class ItemFetchTask {
     /**
      * Tim 1 diem dung MO (khong bi vat can) ngay canh container de tuong tac, thay vi luon dung
      * y+1.2 ngay tren no (co the bi ket neu tren dau ruong co block khac, vd tran nha thap).
+     *
+     * QUAN TRONG: kiem tra dung O ma nguoi choi se DUNG VAO (offset 1 block, cung khoang cach voi
+     * standPoint tinh ben duoi), khong kiem tra o xa hon - neu khong, ruong ke ben (rat pho bien
+     * trong kho do dat lien nhau) co the khien diem dung de xuat lai nam de len chinh ruong do,
+     * gay ket ngay khi bay toi.
      */
     private Vec3d findStandPoint(ClientWorld world, BlockPos containerPos) {
         Direction[] tryOrder = {
-                Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP
+                Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
         };
         for (Direction d : tryOrder) {
-            BlockPos side = containerPos.offset(d, 2);
-            BlockState state = world.getBlockState(side);
-            if (state.isAir() || state.getCollisionShape(world, side).isEmpty()) {
+            BlockPos side = containerPos.offset(d); // o SAT ben canh ruong - dung o nay se dung vao
+            BlockPos sideUp = side.up(); // kiem tra luon tam dau, vi nguoi choi cao ~1.8 block
+            if (isOpen(world, side) && isOpen(world, sideUp)) {
                 return new Vec3d(
-                        containerPos.getX() + 0.5 + d.getOffsetX() * 1.5,
-                        containerPos.getY() + 0.3 + Math.max(0, d.getOffsetY()) * 1.2,
-                        containerPos.getZ() + 0.5 + d.getOffsetZ() * 1.5
+                        containerPos.getX() + 0.5 + d.getOffsetX() * 1.3,
+                        containerPos.getY() + 0.3,
+                        containerPos.getZ() + 0.5 + d.getOffsetZ() * 1.3
                 );
             }
         }
-        // Khong tim duoc huong nao thoang - danh phai dung tam tren, nhung lui ra xa hon truoc
-        return new Vec3d(containerPos.getX() + 0.5, containerPos.getY() + 1.5, containerPos.getZ() + 0.5);
+
+        // Khong co huong ngang nao thoang (vd ruong dat sat nhau tu 4 phia) -> thu phia tren ruong
+        BlockPos above = containerPos.up();
+        BlockPos aboveUp = above.up();
+        if (isOpen(world, above) && isOpen(world, aboveUp)) {
+            return new Vec3d(containerPos.getX() + 0.5, containerPos.getY() + 1.3, containerPos.getZ() + 0.5);
+        }
+
+        // Cuoi cung, danh chiu - dung tam vi tri ngay tren (co the se hoi sat, nhung con hon khong co gi)
+        return new Vec3d(containerPos.getX() + 0.5, containerPos.getY() + 1.2, containerPos.getZ() + 0.5);
+    }
+
+    private boolean isOpen(ClientWorld world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
+        return state.isAir() || state.getCollisionShape(world, pos).isEmpty();
     }
 
     private boolean isSatisfied() {

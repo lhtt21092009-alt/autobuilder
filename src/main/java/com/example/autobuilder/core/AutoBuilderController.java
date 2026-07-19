@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -127,7 +128,8 @@ public class AutoBuilderController {
                             playDoneSound(client);
                             stop();
                         } else {
-                            buildTask = new BuildTask(rescan.missingPositionsBottomUp());
+                            List<BlockPos> nextRow = SchematicScanner.currentRowOnly(rescan.missingPositionsBottomUp());
+                            buildTask = new BuildTask(nextRow);
                         }
                     }
                 }
@@ -145,20 +147,23 @@ public class AutoBuilderController {
             return;
         }
 
-        Map<Item, Integer> needed = new HashMap<>(scan.materialsNeeded());
+        // CHI lay/xay du cho 1 HANG (cung truc Z) tai 1 thoi diem, khong lay nguyen lieu cho ca
+        // phan con lai cua ban ve - tranh vet can het ruong 1 lan.
+        List<BlockPos> rowPositions = SchematicScanner.currentRowOnly(scan.missingPositionsBottomUp());
+        Map<Item, Integer> needed = new HashMap<>(SchematicScanner.materialsForPositions(rowPositions));
         subtractInventory(player, needed);
 
         if (needed.isEmpty() || allZero(needed)) {
             // Da du do trong tui roi, khong can di lay - vao xay luon
-            player.sendMessage(Text.literal("Auto Builder: da du do trong tui - bat dau xay " + scan.missingPositionsBottomUp().size() + " block."), false);
-            buildTask = new BuildTask(scan.missingPositionsBottomUp());
+            player.sendMessage(Text.literal("Auto Builder: da du do trong tui - bat dau xay hang nay (" + rowPositions.size() + " block)."), false);
+            buildTask = new BuildTask(rowPositions);
             phase = Phase.BUILDING;
             return;
         }
 
         int totalNeeded = 0;
         for (int v : needed.values()) totalNeeded += Math.max(0, v);
-        player.sendMessage(Text.literal("Auto Builder: dang di lay nguyen lieu (" + totalNeeded + " item con thieu)..."), false);
+        player.sendMessage(Text.literal("Auto Builder: dang di lay nguyen lieu cho hang nay (" + totalNeeded + " item con thieu)..."), false);
 
         fetchTask = new ItemFetchTask(world, AutoBuilderConfig.INSTANCE, needed);
         phase = Phase.FETCHING;
@@ -172,8 +177,9 @@ public class AutoBuilderController {
             stop();
             return;
         }
-        player.sendMessage(Text.literal("Auto Builder: bat dau xay " + scan.missingPositionsBottomUp().size() + " block con thieu..."), false);
-        buildTask = new BuildTask(scan.missingPositionsBottomUp());
+        List<BlockPos> rowPositions = SchematicScanner.currentRowOnly(scan.missingPositionsBottomUp());
+        player.sendMessage(Text.literal("Auto Builder: bat dau xay hang nay (" + rowPositions.size() + " block)..."), false);
+        buildTask = new BuildTask(rowPositions);
         phase = Phase.BUILDING;
     }
 

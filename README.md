@@ -46,19 +46,18 @@ lai (bam Num Lock lan nua) truoc khi bay/lam viec.
 5. Xay xong het (khong con block nao thieu trong lop dang hien) -> phat am thanh bao hieu va dung lai.
 
 ## Da sua trong ban nay
-- **Loi dung im o ruong khong lam gi**: nguyen nhan la diem dung cu tinh thang ngay tren nap ruong,
-  co the bi ket vao vat can (vd tran nha thap) khien khong bao gio "toi noi" du. Da doi sang tim 1
-  huong TRONG (khong bi chan) canh ben ruong de dung, giong cach mo o BuildTask.
-- **Loi bi ket ngay sau khi mo ruong roi thoat ra**: nhieu kha nang do server van tuong ruong dang
-  mo nen chan di chuyen ngay sau do. Da them buoc dong chac chan hon (goi `setScreen(null)` du
-  phong) + 1 khoang cho dem (~0.3 giay) sau khi dong truoc khi tinh la "xong", giam nguy co xung dot
-  goi tin dong/di chuyen.
+- **Chi lay/xay du cho 1 HANG (truc Z) tai 1 thoi diem** thay vi tinh nguyen lieu cho toan bo phan
+  con lai cua ban ve - tranh viec vet can het ca ruong trong 1 lan lay.
+- **Sua diem dung khi lay do**: truoc kiem tra o cach ruong 2 block nhung lai dung o cach 1.5 block
+  - neu ruong ke ben (rat pho bien trong kho do) chan ngay o do, diem dung se de len chinh ruong
+    ke ben va gay ket ngay khi vua bay toi. Da sua lai kiem tra DUNG o se dung vao (ca tam chan lan
+    tam dau, vi nguoi choi cao ~1.8 block).
+- **Loi bi ket ngay sau khi mo ruong roi thoat ra**: them buoc dong chac chan hon (`setScreen(null)`
+  du phong) + khoang cho dem sau khi dong.
 - **Thu tu xay** doi thanh tung hang (truc Z, Nam -> Bac), het truc Y roi moi qua hang ke.
-- **Uu tien lay vat lieu dang thieu nhieu nhat** truoc trong moi ruong, thay vi lay theo thu tu ngau
-  nhien trong o.
+- **Uu tien lay vat lieu dang thieu nhieu nhat** truoc trong moi ruong.
 - **Luu vi tri item da tung thay** vao `config/autobuilder_chestindex.json`, dung lai cho lan sau.
-- **Da bo nut/thanh trang thai o goc man hinh** theo yeu cau - Start/Stop gio chi thao tac qua GUI
-  (Num Lock).
+- Da bo nut/thanh trang thai o goc man hinh theo yeu cau truoc - Start/Stop qua GUI (Num Lock).
 
 ## Gioi han / dieu can luu y (quan trong, doc truoc khi dung)
 Day la tinh nang rat phuc tap, phien ban dau tien nay uu tien "chay duoc" hon la hoan hao tuyet doi;

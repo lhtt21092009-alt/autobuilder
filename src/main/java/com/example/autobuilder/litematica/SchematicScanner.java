@@ -41,6 +41,38 @@ public final class SchematicScanner {
     public record ScanResult(List<BlockPos> missingPositionsBottomUp, Map<Item, Integer> materialsNeeded) {}
 
     /**
+     * Lay ra chi nhung vi tri thuoc "HANG DAU TIEN" trong danh sach da sap xep (cung gia tri Z voi
+     * phan tu dau tien) - dung de chi lay/xay du cho 1 hang mot, thay vi ca phan con lai cua ban ve
+     * (tranh lay qua nhieu do 1 luc).
+     */
+    public static List<BlockPos> currentRowOnly(List<BlockPos> sortedMissing) {
+        List<BlockPos> row = new ArrayList<>();
+        if (sortedMissing.isEmpty()) return row;
+        int rowZ = sortedMissing.get(0).getZ();
+        for (BlockPos pos : sortedMissing) {
+            if (pos.getZ() == rowZ) row.add(pos);
+        }
+        return row;
+    }
+
+    /** Tinh bang tong hop vat lieu can dung CHI cho danh sach vi tri duoc truyen vao (vd 1 hang). */
+    public static Map<Item, Integer> materialsForPositions(List<BlockPos> positions) {
+        Map<Item, Integer> materials = new HashMap<>();
+        WorldSchematic schematicWorld = SchematicWorldHandler.getSchematicWorld();
+        if (schematicWorld == null) return materials;
+
+        for (BlockPos pos : positions) {
+            BlockState schemState = schematicWorld.getBlockState(pos);
+            if (schemState.isAir()) continue;
+            Item item = schemState.getBlock().asItem();
+            if (item != null && item != net.minecraft.item.Items.AIR) {
+                materials.merge(item, 1, Integer::sum);
+            }
+        }
+        return materials;
+    }
+
+    /**
      * Quet toan bo vung dang hien (theo layer range hien tai cua Litematica) mot lan,
      * tra ve danh sach vi tri con thieu (sap xep Y tang dan, roi den khoang cach toi nguoi choi)
      * va bang tong hop vat lieu con thieu.
