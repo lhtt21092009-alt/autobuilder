@@ -2,6 +2,7 @@ package com.example.autobuilder.inventory;
 
 import com.example.autobuilder.AutoBuilderConfig;
 import com.example.autobuilder.core.FlightUtil;
+import com.example.autobuilder.core.StuckGuard;
 import com.example.autobuilder.core.WaypointRouter;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -42,6 +43,7 @@ public class ItemFetchTask {
     private boolean finished = false;
     private boolean anyItemFound = false;
     private BlockPos currentTargetPos;
+    private final StuckGuard travelGuard = new StuckGuard();
 
     public ItemFetchTask(ClientWorld world, AutoBuilderConfig cfg, Map<Item, Integer> needed) {
         this.needed = new HashMap<>(needed);
@@ -130,6 +132,7 @@ public class ItemFetchTask {
                     currentRoute = WaypointRouter.route(world, player.getPos(), standPoint, target.getY() + 3);
                     routeIndex = 0;
                     currentTargetPos = target;
+                    travelGuard.reset();
                 }
                 Vec3d wp = currentRoute.get(routeIndex);
                 if (FlightUtil.flyToward(player, wp, cfg.flightSpeed)) {
@@ -139,6 +142,16 @@ public class ItemFetchTask {
                         FlightUtil.lookAt(player, new Vec3d(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5));
                         interaction.start(client, target, needed);
                         phase = Phase.INTERACT;
+                    }
+                } else {
+                    StuckGuard.Result result = travelGuard.check(player.getPos(), player);
+                    if (result == StuckGuard.Result.RETRY) {
+                        currentRoute = null; // tinh lai duong bay tu vi tri moi (sau khi nhun len)
+                    } else if (result == StuckGuard.Result.GIVE_UP) {
+                        // Khong toi duoc ruong nay du thu nhieu lan -> bo qua, sang ruong khac
+                        currentRoute = null;
+                        containerIndex++;
+                        phase = Phase.TRAVEL;
                     }
                 }
             }

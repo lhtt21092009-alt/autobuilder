@@ -46,6 +46,12 @@ lai (bam Num Lock lan nua) truoc khi bay/lam viec.
 5. Xay xong het (khong con block nao thieu trong lop dang hien) -> phat am thanh bao hieu va dung lai.
 
 ## Da sua trong ban nay
+- **Loi "bay ra xa roi dung im khong lam gi nua"**: nguyen nhan la ca 2 tac vu bay (lay do va xay)
+  truoc day KHONG CO gioi han thoi gian nao khi bay toi 1 diem - neu diem do vi ly do gi khong the
+  toi duoc (vd tinh toan lech, nam trong khoi dac), no se cho MAI MAI ma khong bao gio bo cuoc. Da
+  them **StuckGuard** dung chung: neu khong nhuc nhich duoc ~1.2 giay, tu nhun len va tinh lai duong
+  bay; sau 3 lan thu van khong duoc thi tu dong BO QUA vi tri/ruong do va chuyen sang cai khac,
+  khong bao gio bi ket vinh vien nua.
 - **Chi lay/xay du cho 1 HANG (truc Z) tai 1 thoi diem** thay vi tinh nguyen lieu cho toan bo phan
   con lai cua ban ve - tranh viec vet can het ca ruong trong 1 lan lay.
 - **Sua diem dung khi lay do**: truoc kiem tra o cach ruong 2 block nhung lai dung o cach 1.5 block

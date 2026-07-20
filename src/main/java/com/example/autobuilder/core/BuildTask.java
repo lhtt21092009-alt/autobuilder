@@ -46,6 +46,7 @@ public class BuildTask {
     private boolean missingMaterial = false;
     private int placedCount = 0;
     private int noSupportCount = 0;
+    private final StuckGuard travelGuard = new StuckGuard();
 
     private static final int VERIFY_TIMEOUT_TICKS = 10;
     private static final Direction[] FACE_PRIORITY = {
@@ -122,6 +123,7 @@ public class BuildTask {
                     currentRoute = WaypointRouter.route(world, player.getPos(), standPoint,
                             SchematicScanner.getHighestEnabledPlacementTop() + 3);
                     routeIndex = 0;
+                    travelGuard.reset();
                 }
                 Vec3d wp = currentRoute.get(routeIndex);
                 if (FlightUtil.flyToward(player, wp, cfg.flightSpeed)) {
@@ -129,6 +131,16 @@ public class BuildTask {
                     if (routeIndex >= currentRoute.size()) {
                         currentRoute = null;
                         phase = Phase.PREPARE;
+                    }
+                } else {
+                    StuckGuard.Result result = travelGuard.check(player.getPos(), player);
+                    if (result == StuckGuard.Result.RETRY) {
+                        currentRoute = null; // tinh lai duong bay tu vi tri moi (sau khi nhun len)
+                    } else if (result == StuckGuard.Result.GIVE_UP) {
+                        // Khong toi duoc diem dung cho vi tri nay du thu nhieu lan -> bo qua, sang block khac
+                        failSkip.add(currentTarget);
+                        currentTarget = null;
+                        currentRoute = null;
                     }
                 }
             }
